@@ -58,6 +58,28 @@ scripts\run_scraper.bat --site litclubbs.ru
 
 Логика: сначала скачиваются рассказы с текущей страницы списка, затем переход на следующую страницу списка. **progress.yaml** в папке сайта хранит список уже скачанных URL — при повторном запуске с тем же `--site` скачивание продолжается с места остановки.
 
+### 3. Экспорт в FB2 (книга)
+
+Скачанные рассказы можно собрать в одну книгу FictionBook 2 (один .fb2 файл) или в отдельный .fb2 на каждый рассказ.
+
+```bash
+# Один FB2-сборник по умолчанию в папке сайта
+./scripts/run_fb2_export.sh --site litclubbs.ru
+
+# Указать выходной файл
+./scripts/run_fb2_export.sh --site litclubbs.ru --output loaded/litclubbs.ru/книга.fb2
+
+# Отдельный FB2 на каждый рассказ (в ту же папку или в --output как папку)
+./scripts/run_fb2_export.sh --site litclubbs.ru --per-story
+
+# Своё название книги
+./scripts/run_fb2_export.sh --site litclubbs.ru --title "Фантастика с litclubbs"
+```
+
+**Windows:** `scripts\run_fb2_export.bat --site litclubbs.ru`
+
+В FB2 попадают текст (из HTML) и иллюстрации (встроены в файл). Жанр по умолчанию — «sf», автор в описании — «Сборник».
+
 ## Структура
 
 - **loaded/<имя_сайта>/annotations.yaml** — разметка (селекторы).
