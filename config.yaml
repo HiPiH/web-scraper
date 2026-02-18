@@ -22,3 +22,7 @@ window_height: 1080
 
 # User-Agent (если не задан — выбирается случайный из списка)
 # user_agent: "Mozilla/5.0 ..."
+
+# Обход Cloudflare / «я не робот» (для скрапера и разметки):
+# use_undetected: true   # использовать undetected-chromedriver (pip install undetected-chromedriver)
+# wait_for_human: true  # после загрузки первой страницы ждать Enter — успеть нажать галочку в браузере

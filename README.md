@@ -54,7 +54,7 @@ scripts\run_scraper.bat --site litclubbs.ru
 
 Скрапер берёт аннотацию из **loaded/litclubbs.ru/annotations.yaml** и сохраняет рассказы, картинки и **progress.yaml** в **loaded/litclubbs.ru/**.
 
-Опции: `--headless` / `--no-headless`, `--sites-dir каталог`, `--list-url URL`, `--config config.yaml`.
+Опции: `--headless` / `--no-headless`, `--sites-dir каталог`, `--list-url URL`, `--config config.yaml`, `--undetected`, `--wait-for-human` (см. ниже).
 
 Логика: сначала скачиваются рассказы с текущей страницы списка, затем переход на следующую страницу списка. **progress.yaml** в папке сайта хранит список уже скачанных URL — при повторном запуске с тем же `--site` скачивание продолжается с места остановки.
 
@@ -64,6 +64,42 @@ scripts\run_scraper.bat --site litclubbs.ru
 - **loaded/<имя_сайта>/progress.yaml** — прогресс скачивания.
 - **loaded/<имя_сайта>/*.json** — рассказы; **loaded/<имя_сайта>/*_images/** — иллюстрации.
 
+## Обход Cloudflare и проверок «я не робот»
+
+Если сайт показывает проверку (Cloudflare, hCaptcha, «Подтвердите, что вы не робот» и т.п.), можно использовать один или оба способа.
+
+### 1. Ручное прохождение (галочка в браузере)
+
+Запустите скрапер или разметку **в видимом режиме** и включите ожидание после загрузки страницы: скрипт откроет страницу и будет ждать, пока вы нажмёте Enter в терминале. За это время пройдите проверку в браузере (нажмите галочку и т.д.).
+
+- **Скрапер:** `--no-headless --wait-for-human` или в **config.yaml**: `headless: false`, `wait_for_human: true`.
+- **Разметка:** `--wait-for-human` (браузер и так видимый).
+
+Пример:
+```bash
+./scripts/run_scraper.sh --site example.com --no-headless --wait-for-human
+```
+
+### 2. undetected-chromedriver
+
+Библиотека [undetected-chromedriver](https://pypi.org/project/undetected-chromedriver/) подменяет драйвер так, чтобы его сложнее было определить как бота. Часто проверка тогда не показывается или проходится автоматически.
+
+Установка (опционально):
+```bash
+pip install undetected-chromedriver
+```
+
+Использование:
+- **Скрапер:** `--undetected` или в **config.yaml**: `use_undetected: true`.
+- **Разметка:** `--undetected`.
+
+Пример:
+```bash
+./scripts/run_scraper.sh --site example.com --undetected --no-headless
+```
+
+Рекомендуется при защите от ботов запускать в **видимом режиме** (`--no-headless`): headless чаще детектируется. При необходимости комбинируйте: `--undetected --no-headless --wait-for-human`.
+
 ## Конфигурация
 
-- **config.yaml** — общие настройки (headless, таймауты, задержки).
+- **config.yaml** — общие настройки (headless, таймауты, задержки, `use_undetected`, `wait_for_human`).

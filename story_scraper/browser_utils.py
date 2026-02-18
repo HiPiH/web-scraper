@@ -15,6 +15,11 @@ try:
 except ImportError:
     ChromeDriverManager = None
 
+try:
+    import undetected_chromedriver as uc
+except ImportError:
+    uc = None
+
 
 def random_delay(min_sec: float, max_sec: float) -> None:
     """Sleep for a random duration between min and max seconds."""
@@ -28,8 +33,19 @@ def create_browser(
     window_height: int = 1080,
     page_load_timeout_sec: int = 30,
     implicit_wait_sec: int = 5,
+    use_undetected: bool = False,
 ) -> WebDriver:
-    """Create Chrome WebDriver with options that reduce bot detection."""
+    """
+    Create Chrome WebDriver. If use_undetected=True and undetected-chromedriver установлен,
+    использует его для обхода Cloudflare и подобных проверок.
+    """
+    if use_undetected and uc is not None:
+        driver = uc.Chrome(headless=headless, use_subprocess=False)
+        driver.set_window_size(window_width, window_height)
+        driver.set_page_load_timeout(page_load_timeout_sec)
+        driver.implicitly_wait(implicit_wait_sec)
+        return driver
+
     opts = Options()
     if headless:
         opts.add_argument("--headless=new")

@@ -52,6 +52,8 @@ def run_labeler(
     site_folder: str | None = None,
     sites_dir: str | Path = SITES_DIR,
     config_path: str | Path | None = None,
+    use_undetected: bool = False,
+    wait_for_human: bool = False,
 ) -> None:
     config = load_config(config_path)
     sites_dir = Path(sites_dir)
@@ -67,6 +69,7 @@ def run_labeler(
         window_height=config.get("window_height", 1080),
         page_load_timeout_sec=config.get("page_load_timeout_sec", 30),
         implicit_wait_sec=config.get("implicit_wait_sec", 5),
+        use_undetected=use_undetected or config.get("use_undetected", False),
     )
 
     path = Path(annotations_path)
@@ -83,6 +86,12 @@ def run_labeler(
         except Exception as e:
             print(f"\nНе удалось загрузить страницу: {e}")
             print("Введите селекторы вручную.\n")
+        if wait_for_human or config.get("wait_for_human"):
+            print("\n>>> Если видна проверка (Cloudflare, «Я не робот» и т.п.) — пройдите её в браузере, затем нажмите Enter.\n")
+            try:
+                input("Нажмите Enter чтобы продолжить разметку... ")
+            except EOFError:
+                pass
 
         print("--- Разметка сайта (браузер открыт) ---")
         print("Вводите CSS селектор или XPath (начинается с / или (). Пустая строка — пропуск.\n")
@@ -121,6 +130,8 @@ def main() -> None:
     parser.add_argument("--site", "-s", default=None, help="Имя папки сайта (по умолчанию — домен из URL)")
     parser.add_argument("--sites-dir", default=SITES_DIR, help=f"Каталог с папками сайтов (по умолчанию {SITES_DIR})")
     parser.add_argument("--config", "-c", default=None, help="Конфиг YAML (опционально)")
+    parser.add_argument("--undetected", action="store_true", help="Использовать undetected-chromedriver (обход Cloudflare)")
+    parser.add_argument("--wait-for-human", action="store_true", help="Ждать Enter после загрузки страницы (успеть нажать галочку)")
     args = parser.parse_args()
 
     url = args.url
@@ -141,6 +152,8 @@ def main() -> None:
         site_folder=args.site,
         sites_dir=args.sites_dir,
         config_path=args.config,
+        use_undetected=args.undetected,
+        wait_for_human=args.wait_for_human,
     )
 
 

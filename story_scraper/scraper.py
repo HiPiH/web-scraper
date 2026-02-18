@@ -112,6 +112,7 @@ def iter_list_pages(
     page_url = list_url
     list_pages_done = 0
 
+    wait_for_human_done = False
     while page_url and list_pages_done < max_list_pages:
         human_like_delay_between_pages(config)
         try:
@@ -119,6 +120,14 @@ def iter_list_pages(
         except TimeoutException:
             break
         human_like_delay_before_action(config)
+        # Дать пользователю пройти проверку Cloudflare / «я не робот» (только раз, в видимом режиме)
+        if not wait_for_human_done and config.get("wait_for_human") and not config.get("headless"):
+            wait_for_human_done = True
+            print("\n>>> Если в браузере видна проверка (Cloudflare, «Подтвердите, что вы не робот» и т.п.) — пройдите её, затем нажмите Enter здесь.\n")
+            try:
+                input("Нажмите Enter чтобы продолжить... ")
+            except EOFError:
+                pass
 
         story_urls = get_story_links_on_current_page(driver, page_url, annotations)
         yield page_url, story_urls
@@ -323,10 +332,16 @@ def run_scraper(
     headless: bool | None = None,
     max_list_pages: int = 100,
     max_story_pages: int = 500,
+    use_undetected: bool = False,
+    wait_for_human: bool = False,
 ) -> None:
     config = load_config(config_path)
     if headless is not None:
         config["headless"] = headless
+    if use_undetected:
+        config["use_undetected"] = True
+    if wait_for_human:
+        config["wait_for_human"] = True
 
     if site:
         sites_dir = Path(sites_dir)
@@ -364,6 +379,7 @@ def run_scraper(
         window_height=config.get("window_height", 1080),
         page_load_timeout_sec=config.get("page_load_timeout_sec", 30),
         implicit_wait_sec=config.get("implicit_wait_sec", 5),
+        use_undetected=config.get("use_undetected", False),
     )
 
     try:
@@ -427,6 +443,8 @@ def main() -> None:
     parser.add_argument("--no-headless", action="store_true", help="Браузер видимый")
     parser.add_argument("--max-list-pages", type=int, default=100, help="Макс. страниц списка")
     parser.add_argument("--max-story-pages", type=int, default=500, help="Макс. страниц рассказа")
+    parser.add_argument("--undetected", action="store_true", help="Использовать undetected-chromedriver (обход Cloudflare)")
+    parser.add_argument("--wait-for-human", action="store_true", help="После загрузки первой страницы ждать Enter (успеть нажать галочку в браузере)")
     args = parser.parse_args()
 
     headless = None
@@ -445,6 +463,8 @@ def main() -> None:
         headless=headless,
         max_list_pages=args.max_list_pages,
         max_story_pages=args.max_story_pages,
+        use_undetected=args.undetected,
+        wait_for_human=args.wait_for_human,
     )
 
 

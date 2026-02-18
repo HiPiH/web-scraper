@@ -32,6 +32,10 @@ DEFAULT_CONFIG = {
     "window_width": 1920,
     "window_height": 1080,
     "user_agent": None,
+    # Обход Cloudflare / «я не робот»: true = использовать undetected-chromedriver (pip install undetected-chromedriver)
+    "use_undetected": False,
+    # После загрузки первой страницы списка ждать Enter (в видимом режиме) — успеть нажать галочку
+    "wait_for_human": False,
 }
 
 USER_AGENTS = [
