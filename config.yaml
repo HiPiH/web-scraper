@@ -1,0 +1,24 @@
+# Конфигурация скрапера и разметки
+# Для разметки браузер всегда видимый; для скрапинга по умолчанию headless.
+
+# Режим браузера при скачивании (true = невидимый, false = видимый)
+headless: false
+
+# Таймаут загрузки страницы (сек)
+page_load_timeout_sec: 30
+implicit_wait_sec: 5
+
+# Задержки «как пользователь» (рандом в диапазоне, обход ограничений)
+# Перед действием (клик, переход)
+delay_before_action_min_sec: 0.5
+delay_before_action_max_sec: 2.0
+# Между загрузками страниц
+delay_between_pages_min_sec: 1.0
+delay_between_pages_max_sec: 4.0
+
+# Размер окна
+window_width: 1920
+window_height: 1080
+
+# User-Agent (если не задан — выбирается случайный из списка)
+# user_agent: "Mozilla/5.0 ..."
