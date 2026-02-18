@@ -8,14 +8,17 @@
 
 ## Установка
 
+**macOS / Linux:**
 ```bash
-# Создать venv и установить зависимости
 ./scripts/install.sh
-# или вручную:
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+# вручную: python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
 ```
+
+**Windows (cmd):**
+```bat
+scripts\install.bat
+```
+Либо вручную: `python -m venv .venv`, затем `.venv\Scripts\activate.bat`, затем `pip install -r requirements.txt`.
 
 ## Использование
 
@@ -24,10 +27,13 @@ pip install -r requirements.txt
 Создаётся папка по имени сайта (домен из URL): **loaded/<домен>/**. Туда сохраняется **annotations.yaml**.
 
 ```bash
+# macOS / Linux
 ./scripts/run_labeler.sh https://litclubbs.ru/articles/proza/sci-fi
-# или
-python -m story_scraper.labeler https://litclubbs.ru/articles/proza/sci-fi
+
+# Windows
+scripts\run_labeler.bat https://litclubbs.ru/articles/proza/sci-fi
 ```
+Или: `python -m story_scraper.labeler <URL>`.
 
 В результате: **loaded/litclubbs.ru/annotations.yaml**. В разметке задаются: область текста, заголовок, «следующая страница», список ссылок на рассказы и пагинация списка.
 
@@ -38,10 +44,13 @@ python -m story_scraper.labeler https://litclubbs.ru/articles/proza/sci-fi
 Указываете **только имя папки сайта** — аннотация и все скачанные данные лежат в ней.
 
 ```bash
+# macOS / Linux
 ./scripts/run_scraper.sh --site litclubbs.ru
-# или
-python -m story_scraper.scraper --site litclubbs.ru
+
+# Windows
+scripts\run_scraper.bat --site litclubbs.ru
 ```
+Или: `python -m story_scraper.scraper --site litclubbs.ru`.
 
 Скрапер берёт аннотацию из **loaded/litclubbs.ru/annotations.yaml** и сохраняет рассказы, картинки и **progress.yaml** в **loaded/litclubbs.ru/**.
 
