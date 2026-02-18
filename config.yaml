@@ -25,4 +25,4 @@ window_height: 1080
 
 # Обход Cloudflare / «я не робот» (для скрапера и разметки):
 # use_undetected: true   # использовать undetected-chromedriver (pip install undetected-chromedriver)
-# wait_for_human: true  # после загрузки первой страницы ждать Enter — успеть нажать галочку в браузере
+wait_for_human: true  # после загрузки первой страницы ждать Enter — успеть нажать галочку в браузере
